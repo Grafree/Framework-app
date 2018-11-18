@@ -2,25 +2,28 @@
 
 var interface = function( datas )
 {       
-    console.log( datas.title );
-    
     if( datas.tache && datas.currentRoute === 'app' )
     {
-        switch( datas.tache ){
+        switch( datas.tache )
+        {
             case '1':
-                $('main div').html('Changer les pneus de la voiture.');
+                document.querySelector('main div').innerHTML = 'Changer les pneus de la voiture.';
             break;
+            
             case '2':
-                $('main div').html('Faire une sauvegarde des données.'); 
+                document.querySelector('main div').innerHTML = 'Faire une sauvegarde des données.'; 
             break;
+            
             case '3':
-                $('main div').html('Développer la fonctionnalité de l\'interface.');
+                document.querySelector('main div').innerHTML = 'Développer la fonctionnalité de l\'interface.';
             break;
+            
             case '4':
-                $('main div').html('Sortir les poubelles.');
+                document.querySelector('main div').innerHTML = 'Sortir les poubelles.';
             break;
+            
             default:
-                $('main div').html('Vous avez complété toutes vos tâches !');
+                document.querySelector('main div').innerHTML = 'Vous avez complété toutes vos tâches !';
             break;
         }
     }

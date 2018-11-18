@@ -10,7 +10,8 @@
       },
     "app":{
         "title": "Application",
-        "public": "true"
+        "public": "true",
+        "scripts" : [ ["interface.js", "interface"] ]
       }
   }
 }
