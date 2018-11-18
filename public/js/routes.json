@@ -1,0 +1,16 @@
+{
+  "routes":{
+    "home":{
+        "title": "Accueil",
+        "public": "true"
+      },
+    "about":{
+        "title": "A propos",
+        "public": "true"
+      },
+    "app":{
+        "title": "Application",
+        "public": "true"
+      }
+  }
+}
