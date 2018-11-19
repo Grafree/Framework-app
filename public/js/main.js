@@ -289,12 +289,22 @@ var setInterface = function()
         document.querySelector('body').classList.add( bodyColor );
     }
     
+    var scriptsLoaded = document.querySelectorAll( 'script.pagescript' );
+    
+    if( scriptsLoaded && scriptsLoaded.length > 0 )
+    {
+        Array.prototype.forEach.call( scriptsLoaded, function( scriptLoaded )
+        {
+            scriptLoaded.parentNode.removeChild( scriptLoaded );
+        });
+    }
+        
     loadViewContent( 'views/pages/' + currentRoute + '.ejs', 'main');
     loadViewContent( 'views/partials/header.ejs', 'header');
     loadViewContent( 'views/partials/footer.ejs', 'footer');
     if( datas.scripts && datas.scripts.length > 0 )
     {
-        loadJsContent( datas.scripts );
+        loadJsContent( datas.scripts, 0, datas.scripts.length );
     }
 };
 
@@ -320,35 +330,28 @@ var loadViewContent = function( getUrl, htmlSection )
     request.send();
 };
 
-var loadJsContent = function( scripts )
+
+var loadJsContent = function( scripts, nScript, nbScripts )
 {
-    var scriptLoaded = document.querySelector( 'script.pagescript' );
-    
-    if( scriptLoaded )
+    var script = document.createElement('script');
+                
+    script.onload = function()
     {
-        scriptLoaded.parentNode.removeChild( scriptLoaded );
-    }
-    
-    scripts.forEach( function( scriptValue ){
-    
-        var script = document.createElement('script');
-
-        script.onload = function()
+        if( scripts[nScript][1] ) 
         {
-            if( scriptValue[1] ) 
-            {
-                window[ scriptValue[1] ]( datas );
-            }
-        };
+            window[ scripts[nScript][1] ]( datas );
+        }
+        if( ( nScript + 1 ) <= nbScripts )
+        {
+            loadJsContent( scripts, ( nScript + 1), nbScripts );
+        }
+    };
+    script.src = 'public/js/' + scripts[nScript][0] + '?' + new Date().getTime();
 
-        script.src = 'public/js/' + scriptValue[0] + '?' + new Date().getTime();
+    script.classList.add( 'pagescript' );
 
-        script.classList.add( 'pagescript' );
-
-        document.querySelector('body').appendChild( script );
-    });
+    document.querySelector('body').appendChild( script );
 };
-
 
 
 var loadPage = function()
