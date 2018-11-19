@@ -341,9 +341,12 @@ var loadJsContent = function( scripts, nScript, nbScripts )
         {
             window[ scripts[nScript][1] ]( datas );
         }
-        if( ( nScript + 1 ) <= nbScripts )
+        
+        var nextScript = ( nScript + 1 );
+        
+        if( nextScript < nbScripts )
         {
-            loadJsContent( scripts, ( nScript + 1), nbScripts );
+            loadJsContent( scripts, nextScript, nbScripts );
         }
     };
     script.src = 'public/js/' + scripts[nScript][0] + '?' + new Date().getTime();
