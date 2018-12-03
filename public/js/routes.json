@@ -2,6 +2,7 @@
   "routes":{
     "home":{
         "title": "Accueil",
+        "dynamicUrlsMethod": "updateSessionDatas",
         "public": "true"
       },
     "about":{

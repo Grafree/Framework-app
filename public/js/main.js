@@ -45,6 +45,11 @@ var dataRoute = function()
         }
     };
     
+    request.onerror = function()
+    {
+        location.hash = homepage;
+    };
+    
     request.send();
 };
 
@@ -160,18 +165,27 @@ var apiDatas = function()
             if( request.status >= 200 && request.status < 400 ){
 
                 var jsonStr = JSON.parse( request.responseText );
-
-                checkDynamicUrls();
+                
+                datas.internetConnexion = true;
 
                 datas.apiDatas = jsonStr;
+
+                checkDynamicUrls();
                 
                 setInterface();
+            }
+            else
+            {
+                datas.internetConnexion = false;
+                setNotification( 'La connexion Internet n\'est pas disponible. Certaines informations ne peuvent pas être mises à jour.' );
+                setInterface();  
             }
         };
         
         request.onerror = function()
         {
-            setNotification( 'API access seems problematic...' );
+            datas.internetConnexion = false;
+            setNotification( 'La connexion Internet n\'est pas disponible. Certaines informations ne peuvent pas être mises à jour.' );
             setInterface();
         };
 
@@ -216,6 +230,18 @@ var removeSession = function( variable )
     localStorage.removeItem( variable );
 };
 
+
+var updateSessionDatas = function()
+{
+    if( datas.apiDatas[0].LastnameUser )
+    {
+        setSession( 'LastnameUser', datas.apiDatas[0].LastnameUser );
+    }
+    if( datas.apiDatas[0].FirstnameUser )
+    {
+        setSession( 'FirstnameUser', datas.apiDatas[0].FirstnameUser );
+    }
+};
 
 var getCurRouterSessions = function()
 {
@@ -266,7 +292,12 @@ var getCurRouterNotifications = function()
 {
     if( currentRoute === 'home' )
     {
-        setNotification( homeNotifications() );
+        var homeNotif = homeNotifications();
+        
+        if( homeNotif )
+        {
+            setNotification( homeNotif );
+        }
     }
     else
     {
@@ -299,17 +330,23 @@ var setInterface = function()
         });
     }
         
-    loadViewContent( 'views/pages/' + currentRoute + '.ejs', 'main');
-    loadViewContent( 'views/partials/header.ejs', 'header');
-    loadViewContent( 'views/partials/footer.ejs', 'footer');
-    if( datas.scripts && datas.scripts.length > 0 )
+    loadViewContent( 'views/partials/header.ejs', 'header', function()
     {
-        loadJsContent( datas.scripts, 0, datas.scripts.length );
-    }
+        loadViewContent( 'views/partials/footer.ejs', 'footer', function()
+        {
+            loadViewContent( 'views/pages/' + currentRoute + '.ejs', 'main', function()
+            {
+                if( datas.scripts && datas.scripts.length > 0 )
+                {
+                    loadJsContent( datas.scripts, 0, datas.scripts.length );
+                }
+            });
+        });       
+    });
+    
 };
 
-
-var loadViewContent = function( getUrl, htmlSection )
+var loadViewContent = function( getUrl, htmlSection, callback )
 {
     var request = new XMLHttpRequest();
     
@@ -317,18 +354,24 @@ var loadViewContent = function( getUrl, htmlSection )
 
     request.onload = function() 
     {
-        if (request.status >= 200 && request.status < 400) 
+        if( request.status >= 200 && request.status < 400 ) 
         {
             var view = request.responseText;
 
             html = ejs.render( view, datas );
-            
+     
             document.querySelector( htmlSection ).innerHTML  = html;
+            
+            if( typeof callback !== 'undefined')
+            {
+                callback();
+            }
         }
     };
       
     request.send();
 };
+
 
 
 var loadJsContent = function( scripts, nScript, nbScripts )
