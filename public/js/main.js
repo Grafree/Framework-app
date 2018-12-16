@@ -70,6 +70,8 @@ var loguedin = function( userDatas )
         setSession('Id', userDatas.id);
         setSession('FirstnameUser', userDatas.firstname);
         setSession('LastnameUser', userDatas.lastname);
+        setSession('EmailUser', userDatas.email);
+        setSession('IdGroup', userDatas.idgroup); // 1 = Admin; 2 = User
         window.location = "";
     }    
 };
@@ -80,6 +82,8 @@ var logout = function()
     removeSession('Id');
     removeSession('FirstnameUser');
     removeSession('LastnameUser');
+    removeSession('EmailUser');
+    removeSession('IdGroup');
     loadPage();
 };
 
